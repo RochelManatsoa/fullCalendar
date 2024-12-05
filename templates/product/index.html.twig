@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Product index{% endblock %}
+
+{% block body %}
+    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}
+    <h1 class="h3">Tout les produits</h1>
+    {% else %}
+    <h1 class="h3">Boissons</h1>
+    {% endif %}
+
+    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>CreatedAt</th>
+                    <th>UpdatedAt</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.createdAt ? product.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>{{ product.updatedAt ? product.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>
+                        <a class="btn btn-sm rounded-cirle btn-info" href="{{ path('app_product_show', {'id': product.id}) }}"><i class="bi bi-eye"></i></a>
+                        <a class="btn btn-sm rounded-cirle btn-danger" href="{{ path('app_product_edit', {'id': product.id}) }}"><i class="bi bi-pencil"></i></a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">Aucun produit trouvé</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+        <div>
+            <a class="btn btn-primary my-3 px-5 rounded-pill" href="{{ path('app_product_new') }}">Create new</a>
+        </div>
+    {% endif %}
+    <div class="row">
+        {% for product in products %}
+            {% if product.category == 'boissons' %}
+            <div class="col-3 g-5">
+                <div class="card mb-3 text-center">
+                    <img src="{{ vich_uploader_asset(product, 'imageFile') }}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <p class="card-text">{{ product.description }}</p>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('app_cart_add', {'id': product.id}) }}" class="btn btn-primary btn-sm rounded-pill px-4">Ajouter au panier</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}
